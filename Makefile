@@ -11,6 +11,9 @@ cmp: $(SRC_DIR)/bigint.c $(SRC_DIR)/bigint_aux.c
 add: $(SRC_DIR)/bigint.c $(SRC_DIR)/bigint_aux.c
 	$(CC) $(CFLAGS) -o bin/$@ test/$@.c $^
 
+sub: $(SRC_DIR)/bigint.c $(SRC_DIR)/bigint_aux.c
+	$(CC) $(CFLAGS) -o bin/$@ test/$@.c $^
+
 clean:
 	rm -f bin/*
 
