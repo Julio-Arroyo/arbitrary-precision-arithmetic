@@ -83,11 +83,24 @@ void test_ans_same_size() {
 }
 
 void test_same_addr() {
-  // TODO: where X, Y, A are the same location in memory
+  const char *x_str = "89FBB9FFA177072A380B6B5451CAB81119DFE79472FB0";
+  bigint X;
+  big_init(&X);
+  big_read_string(&X, x_str);
+
+  big_add(&X, &X, &X);
+
+  char twice_x_buf[60];
+  size_t olen;
+  assert(0 == big_write_string(&X, twice_x_buf, 60, &olen));
+
+  const char *twice_x_expected_str = "113F773FF42EE0E547016D6A8A395702233BFCF28E5F60";
+  print_test_result("Test src/dest same address", strcmp(twice_x_expected_str, twice_x_buf), "");
 }
 
 int main() {
   test_big_add();
   test_big_add_three_and_two_limb_numbers();
+  test_same_addr();
 }
 
