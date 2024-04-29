@@ -8,6 +8,9 @@ io: $(SRC_DIR)/bigint.c $(SRC_DIR)/bigint_aux.c
 cmp: $(SRC_DIR)/bigint.c $(SRC_DIR)/bigint_aux.c
 	$(CC) $(CFLAGS) -o bin/$@ test/$@.c $^
 
+add: $(SRC_DIR)/bigint.c $(SRC_DIR)/bigint_aux.c
+	$(CC) $(CFLAGS) -o bin/$@ test/$@.c $^
+
 clean:
 	rm -f bin/*
 

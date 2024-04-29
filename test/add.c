@@ -1,9 +1,12 @@
+#include "test_bigint.h"
 #include "bigint.h"
 
 void test_big_add() {
-  bigint x1, x2, ans, soln;
+  const char *test_name = "Test big add";
 
-  big_init(&x1);  // TODO: init inside methods
+  bigint x1, x2, ans, soln, zero;
+
+  big_init(&x1);
   uint8_t x1_bin[2] = {0xB0, 0x00};
   big_read_binary(&x1, x1_bin, 2);
 
@@ -15,15 +18,76 @@ void test_big_add() {
   big_add(&ans, &x1, &x2);
 
   big_init(&soln);
-  uint8_t ans[2] = {0xB0, 0x02};
-  big_read_binary(&soln, ans, 2);
+  uint8_t soln_bin[2] = {0xB0, 0x02};
+  big_read_binary(&soln, soln_bin, 2);
 
-  assert(0 == big_cmp(soln, ans));
-  assert(-1 == big_cmp(BIG_ZERO, ans));
-  assert(1 == big_cmp(ans, BIG_ZERO));
+  zero = BIG_ZERO;
+  print_test_result(test_name,
+                    ((0 == big_cmp(&soln, &ans)) &&
+                     (-1 == big_cmp(&zero, &ans)) &&
+                     (1 == big_cmp(&ans, &zero))),
+                    "");
+}
+
+void test_big_add_three_and_two_limb_numbers() {
+  const char *test_name = "Test add three and two limb numbers";
+
+  const char *x1_str = "0x89FBB9FFA177072A380B6B5451CAB81119DFE79472FB0";
+  bigint x1;
+  big_init(&x1);
+  assert(0 == big_read_string(&x1, x1_str));
+
+  const char *x2_str = "0xF127B702E4771196F395D5376561B";
+  bigint x2;
+  big_init(&x2);
+  assert(0 == big_read_string(&x2, x2_str));
+
+  bigint ans;
+  big_init(&ans);
+  big_add(&ans, &x1, &x2);
+
+  char ans_buf[50];
+  size_t ans_str_len;
+  if (0 != big_write_string(&ans, ans_buf, 50, &ans_str_len)) {
+    print_test_result(test_name, 0, "could not write string");
+  }
+
+  const char *expected = "89FBB9FFA177072B293322573641C9A80D75BCCBD85CB";
+  bigint bi_expected;
+  big_init(&bi_expected);
+  big_read_string(&bi_expected, expected);
+
+  print_test_result(test_name,
+                    ((0 == big_cmp(&bi_expected, &ans)) &&   // testing big_cmp
+                     (ans_str_len + 1 == strlen(x1_str)) &&  // expected olen
+                     (strcmp(ans_buf, expected) == 0)), // expected output of write_string
+                    "");
+}
+
+void test_additive_identity() {
+  // TODO
+}
+
+void test_associativity() {
+  // TODO
+}
+
+void test_commutativity() {
+  // TODO
+}
+
+void test_ans_same_size() {
+  // TODO: in general, adding two n-limb numbers gives a n+1 limb number, but
+  // it may just be n if the operands are not large enough. Test most-significant
+  // bit after adding two numbers that do not result in an increased number of limbs
+}
+
+void test_same_addr() {
+  // TODO: where X, Y, A are the same location in memory
 }
 
 int main() {
   test_big_add();
+  test_big_add_three_and_two_limb_numbers();
 }
 
