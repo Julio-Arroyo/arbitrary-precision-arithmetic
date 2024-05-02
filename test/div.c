@@ -129,9 +129,9 @@ void test_div1() {
   size_t qolen;
   big_write_string(&q, qbuf, 100, &qolen);
   const char *r_str_expected = "88E693DA97FBF32C81635396CB7AE5D";
-  char rbuf[32];
+  char rbuf[100];
   size_t rolen;
-  big_write_string(&r, rbuf, 32, &rolen);
+  assert(0 == big_write_string(&r, rbuf, 100, &rolen));
 
   print_test_result("Test div1",
                     ((rolen == 32) &&
@@ -142,10 +142,14 @@ void test_div1() {
   big_free(&x2);
 }
 
+void test_scalar_div_same_addr() {
+  print_test_result("Test scalar div same addr", false, "TODO not implemented");
+}
 
 int main() {
   test_all_remainder();
   test_scalar_div();
+  test_scalar_div_same_addr();
   test_div0();
   test_div1();
 }

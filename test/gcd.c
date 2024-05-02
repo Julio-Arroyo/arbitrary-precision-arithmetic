@@ -45,7 +45,7 @@ void test_gcd1() {
   char buf[2];
   size_t olen;
   big_write_string(&gcd, buf, 2, &olen);
-  print_test_result(&gcd, strcmp(buf, expected) == 0, "");
+  print_test_result("Test GCD1", strcmp(buf, expected) == 0, "");
 
   big_free(&x1);  big_free(&x2);  big_free(&gcd);
 }
@@ -75,6 +75,6 @@ int main() {
   test_scalar_gcd();
   test_gcd0();
   test_gcd2();
-  // test_gcd1();
+  test_gcd1();
 }
 
