@@ -101,9 +101,83 @@ void test_negative_result() {
   print_test_result("Test negative result", strcmp(buf, small_minus_big) == 0, "");
 }
 
+void test_negative_self_subtraction() {
+  const char *test_name = "Test negative self subtraction";
+
+  const char *x1_str = "-137B22A5DC3DF61CC";
+  const char *x2_str = "1554AE83C80E1992C";
+
+  bigint x1;
+  big_init(&x1);
+  assert(0 == big_read_string(&x1, x2_str));
+
+  bigint x2;
+  big_init(&x2);
+  assert(0 == big_read_string(&x2, x1_str));
+
+  big_sub(&x2, &x2, &x1);
+
+  char ans_buf[50];
+  size_t ans_str_len;
+  if (0 != big_write_string(&x2, ans_buf, 50, &ans_str_len)) {
+    print_test_result(test_name, 0, "could not write string");
+  }
+
+  const char *expected = "-28CFD129A44C0FAF8";
+  bigint bi_expected;
+  big_init(&bi_expected);
+  big_read_string(&bi_expected, expected);
+
+  print_test_result(test_name,
+                    ((0 == big_cmp(&bi_expected, &x2)) &&   // testing big_cmp
+                     (ans_str_len == strlen(expected) + 1) &&  // expected olen
+                     (strcmp(ans_buf, expected) == 0)), // expected output of write_string
+                    "");
+  big_free(&x1);  big_free(&x2);  big_free(&bi_expected);
+}
+
+void test_inv_mod_bug() {
+  const char *test_name = "Test -0x308 - 0x113";
+
+  const char *D_str = "-0x308";
+  bigint D;
+  big_init(&D);
+  assert(0 == big_read_string(&D, D_str));
+
+  const char *B_str = "-0x113";
+  bigint B;
+  big_init(&B);
+  assert(0 == big_read_string(&B, B_str));
+
+  big_sub(&D, &D, &B);
+
+  char ans_buf[50];
+  size_t ans_str_len;
+  if (0 != big_write_string(&D, ans_buf, 50, &ans_str_len)) {
+    print_test_result(test_name, 0, "could not write string");
+  }
+
+  const char *expected = "-1F5";
+  bigint bi_expected;
+  big_init(&bi_expected);
+  big_read_string(&bi_expected, expected);
+
+  print_test_result(test_name,
+                    ((0 == big_cmp(&bi_expected, &D)) &&   // testing big_cmp
+                     (ans_str_len == strlen(expected) + 1) &&  // expected olen
+                     (strcmp(ans_buf, expected) == 0)), // expected output of write_string
+                    "");
+  big_free(&B);  big_free(&D);  big_free(&bi_expected);
+}
+
 int main() {
+  // TODO tests have memory leaks
+  printf("*** TEST BIG_SUB ***\n");
   test_sub1();
   test_self_subtraction();
   test_negative_result();
+  test_negative_self_subtraction();
+  test_inv_mod_bug();
+  printf("\n");
 }
 
