@@ -5,7 +5,7 @@
 void test_two_limb_raised_scalar() {
   const char *base_str = "0x25CE0AB2F";
   const char *mod_str = "0x07A607BBE974EDD9B";
-  const char *ans_str = "0x5C69F15DE8B0535";
+  const char *ans_str = "5C69F15DE8B0535";
 
   bigint base, exponent, ans, modulo;
   big_init(&base);  big_init(&exponent);  big_init(&ans);  big_init(&modulo);
@@ -46,8 +46,29 @@ void test_montgomery_mul() {
   big_free(&x);  big_free(&y);  big_free(&m);  big_free(&soln);  big_free(&ans);
 }
 
+// void test_montgomery_mul2() {
+//   const char *x_str = "DA92CD1878C898C";
+//   const char *y_str = "A1E5EB5836E2FD1EEB592A22F905BF8A5D117D";
+//   const char *m_str = "0x843A804B7A3979747A7B7EA76B8CFAB5C74F0E6697E146236EC48585029931CA375";
+//   const char *soln_str = ""; // TODO
+//   assert(false);
+
+//   bigint x, y, m, soln;
+//   big_init(&x);  big_init(&y);  big_init(&m);  big_init(&soln);
+//   big_read_string(&x, x_str);
+//   big_read_string(&y, y_str);
+//   big_read_string(&m, m_str);
+//   big_read_string(&soln, soln_str);
+
+//   big_montgomery_mul(&x, &x, &y, &m);
+
+//   print_test_result("Test montgomery multiplication 2: ", big_cmp(&x, &soln) == 0, "");
+
+//   big_free(&x);  big_free(&y);  big_free(&m);  big_free(&soln);
+// }
+
 int main() {
-  // test_two_limb_raised_scalar();
+  test_two_limb_raised_scalar();
   test_montgomery_mul();
 }
 
