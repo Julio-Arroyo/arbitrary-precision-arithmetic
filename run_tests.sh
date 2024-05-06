@@ -6,5 +6,5 @@
 ./bin/div
 ./bin/gcd
 ./bin/inv_mod
-# ./bin/montgomery
+./bin/montgomery
 

@@ -93,9 +93,12 @@ void test_same_addr() {
   char twice_x_buf[60];
   size_t olen;
   assert(0 == big_write_string(&X, twice_x_buf, 60, &olen));
-
   const char *twice_x_expected_str = "113F773FF42EE0E547016D6A8A395702233BFCF28E5F60";
-  print_test_result("Test src/dest same address", strcmp(twice_x_expected_str, twice_x_buf), "");
+  print_test_result("Test src/dest same address",
+                    0 == strcmp(twice_x_expected_str, twice_x_buf),
+                    "");
+
+  big_free(&X);
 }
 
 int main() {
