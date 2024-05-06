@@ -106,6 +106,27 @@ void test_tiny_example() {
   big_free(&ans1);  big_free(&ans2);  big_free(&X);  big_free(&Y);
 }
 
+void test_m_mod_base() {
+  bigint ans1, X, Y;
+  big_init(&ans1);  big_init(&X);  big_init(&Y);
+
+  const char *xstr = "0xC59AF3664FA25156B";
+  big_read_string(&X, xstr);
+  const char *ystr = "0x10000000000000000";
+  big_read_string(&Y, ystr);
+
+  assert(0 == big_inv_mod(&ans1, &X, &Y));
+
+  const char *solution1 = "A5103BCB3A866F43";
+
+  char buf1[128];
+  size_t olen;
+  big_write_string(&ans1, buf1, 128, &olen);
+
+  print_test_result("Test m mod BASE", strcmp(buf1, solution1) == 0, "");
+  big_free(&ans1);  big_free(&X);  big_free(&Y);
+}
+
 int main() {
   printf("*** TESTS INV_MOD ***\n");
   test_textbook_example();
@@ -113,6 +134,7 @@ int main() {
   test_no_inv_mod();
   test_bad_mod1();
   test_mod_inv();
+  test_m_mod_base();
   printf("\n");
 }
 
