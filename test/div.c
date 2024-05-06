@@ -74,6 +74,39 @@ void test_scalar_div() {
   big_free(&r1);  big_free(&r2);
 }
 
+void test_scalar_div_all_remainder() {
+  bigint q1, r1, dividend;
+  big_init(&q1);  big_init(&dividend);  big_init(&r1);
+
+  const char *dividend_str = "0x45";
+  big_read_string(&dividend, dividend_str);
+
+  big_scalar_div(&q1, &r1, &dividend, 1024);
+
+  char buf1[100]; char buf2[100];
+  size_t olen1;
+  big_write_string(&q1, buf1, 100, &olen1);
+  big_write_string(&r1, buf2, 100, &olen1);
+
+  print_test_result("Test scalar div all remainder",
+                    (0 == strcmp("0", buf1) && 0 == strcmp("45", buf2)),
+                    "");
+
+  uint8_t dividend2_bytes[] = {0x04, 0x03};
+  big_read_binary(&dividend, dividend2_bytes, 2);
+
+  big_scalar_div(&q1, &r1, &dividend, 1024);
+
+  big_write_string(&q1, buf1, 100, &olen1);
+  big_write_string(&r1, buf2, 100, &olen1);
+
+  print_test_result("Test scalar div edge case",
+                    (0 == strcmp("1", buf1) && 0 == strcmp("3", buf2)),
+                    "");
+
+  big_free(&q1);  big_init(&dividend);  big_free(&r1);
+}
+
 void test_div0() {
   bigint x1, x2;
   const char *x1_str = "0xCD10645CC6728";
@@ -150,6 +183,7 @@ int main() {
   test_all_remainder();
   test_scalar_div();
   test_scalar_div_same_addr();
+  test_scalar_div_all_remainder();
   test_div0();
   test_div1();
 }
