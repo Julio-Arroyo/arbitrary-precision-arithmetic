@@ -12,12 +12,9 @@ void test_no_inv_mod() {
   const char *x2_str = "AAA5741E4070CC960";
   big_read_string(&x2, x2_str);
 
-  printf("oneway: %i\n", big_inv_mod(&mod_inv, &x1, &x2));
-  printf("otherway: %d\n", big_inv_mod(&mod_inv, &x2, &x1));
-
   print_test_result("Test no modular multiplicative inverse",
-                    big_inv_mod(&mod_inv, &x1, &x2) == ERR_BIGINT_NOT_ACCEPTABLE,  //  &&
-                    // big_inv_mod(&mod_inv, &x2, &x1) == ERR_BIGINT_NOT_ACCEPTABLE
+                    big_inv_mod(&mod_inv, &x1, &x2) == ERR_BIGINT_NOT_ACCEPTABLE &&
+                    big_inv_mod(&mod_inv, &x2, &x1) == ERR_BIGINT_NOT_ACCEPTABLE,
                     "");
 
   big_free(&x1);  big_free(&x2);  big_free(&mod_inv);  big_free(&mod_inv1);
@@ -49,7 +46,7 @@ void test_mod_inv() {
   big_read_string(&Y, ystr);
 
   assert(0 == big_inv_mod(&ans1, &X, &Y));
-  assert(0 == big_inv_mod(&ans2, &X, &Y));
+  assert(0 == big_inv_mod(&ans2, &Y, &X));
 
   const char *solution1 = "B28DF56D";
   const char *solution2 = "73372E97ACD41FC5";
@@ -60,10 +57,7 @@ void test_mod_inv() {
   big_write_string(&ans1, buf1, 128, &olen);
   big_write_string(&ans2, buf2, 128, &olen);
 
-  printf("buf1: %s\n", buf1);
-  printf("buf2: %s\n", buf2);
-
-  print_test_result("Test modular multiplicative inverse",
+  print_test_result("Test mod_inv",
                     strcmp(buf1, solution1) == 0 && strcmp(buf2, solution2) == 0, "");
   big_free(&ans1);  big_free(&ans2);  big_free(&X);  big_free(&Y);
 }
@@ -113,12 +107,12 @@ void test_tiny_example() {
 }
 
 int main() {
-  printf("*** MODULAR MULTIPLICATIVE INVERSE TESTS ***\n");
+  printf("*** TESTS INV_MOD ***\n");
   test_textbook_example();
   test_tiny_example();
-  // test_no_inv_mod();
-  // test_bad_mod1();
-  // test_mod_inv();
+  test_no_inv_mod();
+  test_bad_mod1();
+  test_mod_inv();
   printf("\n");
 }
 

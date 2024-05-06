@@ -9,8 +9,8 @@ void test_scalar_gcd() {
 }
 
 void test_gcd0() {
-  bigint x1, x2, gcd;
-  big_init(&x1);  big_init(&x2);  big_init(&gcd);
+  bigint x1, x2, gcd, gcd1;
+  big_init(&x1);  big_init(&x2);  big_init(&gcd);  big_init(&gcd1);
 
   const char *x1_str = "AE27B9DE8";
   big_read_string(&x1, x1_str);
@@ -26,7 +26,12 @@ void test_gcd0() {
   big_write_string(&gcd, buf, 2, &olen);
   print_test_result("Test GCD(bigint, limb)", strcmp(buf, expected) == 0, "");
 
-  big_free(&x1);  big_free(&x2);  big_free(&gcd);
+  char buf1[5];
+  big_binary_extended_gcd(NULL, NULL, &gcd1, &x1, &x2);
+  big_write_string(&gcd, buf1, 5, &olen);
+  print_test_result("Test binary extended GCD(bigint, limb)", strcmp(buf1, expected) == 0, "");
+
+  big_free(&x1);  big_free(&x2);  big_free(&gcd);  big_free(&gcd1);
 }
 
 void test_gcd1() {
@@ -47,6 +52,10 @@ void test_gcd1() {
   big_write_string(&gcd, buf, 2, &olen);
   print_test_result("Test GCD1", strcmp(buf, expected) == 0, "");
 
+  buf[0] = 'j';  buf[1] = 'j';
+  big_binary_extended_gcd(NULL, NULL, &gcd, &x1, &x2);
+  big_write_string(&gcd, buf, 2, &olen);
+  print_test_result("Test GCD1 binary extended", strcmp(buf, expected) == 0, "");
   big_free(&x1);  big_free(&x2);  big_free(&gcd);
 }
 
@@ -68,13 +77,19 @@ void test_gcd2() {
   big_write_string(&gcd, buf, 2, &olen);
   print_test_result("Test gcd2", strcmp(buf, expected) == 0, "");
 
+  big_binary_extended_gcd(NULL, NULL, &gcd, &x1, &x2);
+  big_write_string(&gcd, buf, 2, &olen);
+  print_test_result("Test gcd2 binary extended", strcmp(buf, expected) == 0, "");
+
   big_free(&x1);  big_free(&x2);  big_free(&gcd);
 }
 
 int main() {
+  printf("*** TESTS GCD ***\n");
   test_scalar_gcd();
   test_gcd0();
   test_gcd2();
   test_gcd1();
+  printf("\n");
 }
 

@@ -5,6 +5,6 @@
 ./bin/mul
 ./bin/div
 ./bin/gcd
-# ./bin/inv_mod
+./bin/inv_mod
 # ./bin/montgomery
 

@@ -23,6 +23,14 @@ div: $(SRC_DIR)/bigint.c $(SRC_DIR)/bigint_aux.c
 gcd: $(SRC_DIR)/bigint.c $(SRC_DIR)/bigint_aux.c
 	$(CC) $(CFLAGS) -o bin/$@ test/$@.c $^
 
+inv_mod: $(SRC_DIR)/bigint.c $(SRC_DIR)/bigint_aux.c
+	$(CC) $(CFLAGS) -o bin/$@ test/$@.c $^
+
+montgomery: $(SRC_DIR)/bigint.c $(SRC_DIR)/bigint_aux.c
+	$(CC) $(CFLAGS) -o bin/$@ test/$@.c $^
+
+all: io cmp add sub mul div gcd inv_mod montgomery
+
 clean:
-	rm -f bin/*
+	rm -rf bin/*
 
