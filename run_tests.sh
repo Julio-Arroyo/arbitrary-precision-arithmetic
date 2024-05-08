@@ -7,4 +7,4 @@
 ./bin/gcd
 ./bin/inv_mod
 ./bin/montgomery
-
+./bin/exp_mod

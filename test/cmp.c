@@ -29,6 +29,8 @@ void test_leading_zeros_equal_wo_leading_zeros() {
 }
 
 int main() {
+  printf("*** TEST cmp ***\n");
   test_cmp_two_limb_numbers();
+  printf("\n");
 }
 

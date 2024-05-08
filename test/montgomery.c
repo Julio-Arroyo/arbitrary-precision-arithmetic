@@ -2,30 +2,6 @@
 #include "bigint_aux.h"
 #include "test_bigint.h"
 
-void test_two_limb_raised_scalar() {
-  const char *base_str = "0x25CE0AB2F";
-  const char *mod_str = "0x07A607BBE974EDD9B";
-  const char *ans_str = "5C69F15DE8B0535";
-
-  bigint base, exponent, ans, modulo;
-  big_init(&base);  big_init(&exponent);  big_init(&ans);  big_init(&modulo);
-
-  big_read_string(&base, base_str);
-  big_read_string(&modulo, mod_str);
-  big_set_nonzero(&exponent, 7);
-
-  assert(0 == big_exp_mod(&ans, &base, &exponent, &modulo, NULL));
-
-  char ans_buf[51];
-  size_t olen;
-  big_write_string(&ans, ans_buf, 51, &olen);
-  printf("her: %s\n", ans_buf);
-
-  print_test_result("Test exp mod two-limb number to small scalar", 0 == strcmp(ans_str, ans_buf), "");
-
-  big_free(&base);  big_free(&exponent);  big_free(&ans);  big_free(&modulo);
-}
-
 void test_montgomery_mul() {
   const char *x_str = "0x07A607BBE974EDD9B";
   const char *y_str = "0x25CE0AB2F";
@@ -44,6 +20,24 @@ void test_montgomery_mul() {
   print_test_result("Test montgomery multiplication: ", big_cmp(&ans, &soln) == 0, "");
 
   big_free(&x);  big_free(&y);  big_free(&m);  big_free(&soln);  big_free(&ans);
+}
+
+void test_repeated_squaring() {
+  const char *m_str = "0x165A0BC01";
+  const char *q_str = "0x58262CB3";
+  bigint m, q;
+  big_init(&m);
+  big_init(&q);
+  big_read_string(&m, m_str);
+  big_read_string(&q, q_str);
+
+  for (size_t i = 0; i < 10; i++) {
+    big_montgomery_mul(&q, &q, &q, &m);
+    big_print(&q);
+  }
+
+  big_free(&m);
+  big_free(&q);
 }
 
 // void test_montgomery_mul2() {
@@ -68,7 +62,9 @@ void test_montgomery_mul() {
 // }
 
 int main() {
-  test_two_limb_raised_scalar();
+  printf("*** TEST montgomery ***\n");
   test_montgomery_mul();
+  test_repeated_squaring();
+  printf("\n");
 }
 

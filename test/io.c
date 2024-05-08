@@ -66,7 +66,9 @@ void test_read_string_write_binary() {
 }
 
 int main() {
+  printf("*** TEST io ***\n");
   test_read_string_write_binary();
   test_read_binary_write_string();
+  printf("\n");
 }
 

@@ -21,7 +21,6 @@ void test_all_remainder() {
   char qbuf[100];
   size_t qolen;
   big_write_string(&q, qbuf, 100, &qolen);
-  const char *r_str_expected = x2_str;
   char rbuf[32];
   size_t rolen;
   big_write_string(&r, rbuf, 32, &rolen);
@@ -180,11 +179,13 @@ void test_scalar_div_same_addr() {
 }
 
 int main() {
+  printf("*** TEST div ***\n");
   test_all_remainder();
   test_scalar_div();
   test_scalar_div_same_addr();
   test_scalar_div_all_remainder();
   test_div0();
   test_div1();
+  printf("\n");
 }
 

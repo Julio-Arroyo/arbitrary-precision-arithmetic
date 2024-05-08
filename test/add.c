@@ -102,8 +102,10 @@ void test_same_addr() {
 }
 
 int main() {
+  printf("*** TEST add ***\n");
   test_big_add();
   test_big_add_three_and_two_limb_numbers();
   test_same_addr();
+  printf("\n");
 }
 

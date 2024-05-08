@@ -66,7 +66,9 @@ void test_negative_scalar_mul() {
 // TODO test same addr
 
 int main() {
+  printf("*** TEST mul ***\n");
   test_mul0();
   test_negative_mul();
   test_negative_scalar_mul();
+  printf("\n");
 }
