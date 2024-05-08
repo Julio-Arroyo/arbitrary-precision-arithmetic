@@ -33,7 +33,10 @@ montgomery: $(SRC_DIR)/bigint.c $(SRC_DIR)/bigint_aux.c $(SRC_DIR)/number_theory
 exp_mod: $(SRC_DIR)/bigint.c $(SRC_DIR)/bigint_aux.c $(SRC_DIR)/number_theory.c ../keygen-jarroyoi/src-given/random.c 
 	$(CC) $(CFLAGS) -o bin/$@ test/$@.c $^
 
-all: io cmp add sub mul div gcd inv_mod montgomery exp_mod
+is_prime: $(SRC_DIR)/bigint.c $(SRC_DIR)/bigint_aux.c $(SRC_DIR)/number_theory.c ../keygen-jarroyoi/src-given/random.c 
+	$(CC) $(CFLAGS) -o bin/$@ test/$@.c $^
+
+all: io cmp add sub mul div gcd inv_mod montgomery exp_mod is_prime
 
 clean:
 	rm -rf bin/*

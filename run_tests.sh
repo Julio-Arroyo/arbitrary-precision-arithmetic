@@ -8,3 +8,4 @@
 ./bin/inv_mod
 ./bin/montgomery
 ./bin/exp_mod
+./bin/is_prime
