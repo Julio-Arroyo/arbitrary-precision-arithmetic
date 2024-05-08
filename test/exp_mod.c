@@ -124,6 +124,24 @@ void test_exponentiate_one() {
   big_free(&m);
 }
 
+void test_fooled_fermat() {
+  const char *bigprime_str = "0x6C1";  // pseudo prime 1729
+  const char *random_str = "0x29F";
+  bigint big_prime, random_base;
+  big_init(&big_prime);
+  big_init(&random_base);
+
+  big_read_string(&big_prime, bigprime_str);
+  big_read_string(&random_base, random_str);
+  // big_fill_random(&random_base, (big_prime.num_limbs - 1) * 8);
+
+  print_test_result("Test Carmichael 1729 fools Fermat",
+                    PROBABLY_PRIME == fermat_test(&random_base, &big_prime), "");
+
+  big_free(&big_prime);
+  big_free(&random_base);
+}
+
 int main() {
   printf("*** Test exp_mod ***\n");
   test_scalar_raised_scalar();
@@ -131,6 +149,7 @@ int main() {
   test_fermat_small_prime();
   test_fermat_big_prime();
   test_fermat_medium_prime();
+  test_fooled_fermat();
   test_exponentiate_one();
   printf("\n");
 }

@@ -44,6 +44,48 @@ void test_composite0() {
   big_free(&composite);
 }
 
+void test_carmichael0() {
+  bigint carmichael;
+  big_init(&carmichael);
+  big_read_string(&carmichael, "0xD7DB6A899FA9C31");
+  int res = big_is_prime(&carmichael);
+  printf("res: %d\n", res);
+  print_test_result("Test carmichael 0",
+                    ERR_BIGINT_NOT_ACCEPTABLE == res, "");
+  big_free(&carmichael);
+}
+
+void test_carmichael1() {
+  bigint carmichael;
+  big_init(&carmichael);
+  big_read_string(&carmichael, "0x6C1");
+  int res = big_is_prime(&carmichael);
+  printf("res: %d\n", res);
+  print_test_result("Test carmichael 1",
+                    ERR_BIGINT_NOT_ACCEPTABLE == res, "");
+  big_free(&carmichael);
+}
+
+void test_carmichael2() {
+  bigint carmichael;
+  big_init(&carmichael);
+  big_read_string(&carmichael, "0x22CF");
+  int res = big_is_prime(&carmichael);
+  printf("res: %d\n", res);
+  print_test_result("Test carmichael 2",
+                    ERR_BIGINT_NOT_ACCEPTABLE == res, "");
+  big_free(&carmichael);
+}
+
+void test_generate_primes() {
+  bigint X;
+  big_init(&X);
+  for (size_t i = 0; i < 1; i++) {
+    big_gen_prime(&X, 1000);
+  }
+  big_free(&X);
+}
+
 int main() {
   printf("*** TEST is_prime ***\n");
   test_prime0();
@@ -51,5 +93,9 @@ int main() {
   test_prime2();
   test_prime3();
   test_composite0();
+  test_generate_primes();
+  test_carmichael0();
+  test_carmichael1();
+  test_carmichael2();
   printf("\n");
 }
