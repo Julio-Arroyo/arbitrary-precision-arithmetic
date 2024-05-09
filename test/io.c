@@ -26,6 +26,7 @@ void test_read_binary_write_string() {
 
   const char *ans = "1234567890ABCDEF1234";
   print_test_result(test_name, (X_str_len == strlen(ans) + 1) && (strcmp(str_buf, ans) == 0), "");
+  big_free(&X);
 }
 
 /**
@@ -62,7 +63,8 @@ void test_read_string_write_binary() {
   // Check if the output matches the expected output
   int test_result = 0 == memcmp(buffer, expected_buffer, sizeof(expected_buffer));
   const char *test_name = "Test read string write binary";
-  print_test_result(test_name, test_result, ""); 
+  print_test_result(test_name, test_result, "");
+  big_free(&X);
 }
 
 int main() {

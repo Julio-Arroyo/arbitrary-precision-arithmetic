@@ -19,6 +19,8 @@ void test_self_subtraction() {
     print_test_result(test_name, 0, "could not write string");
   }
   print_test_result(test_name, 0 == strcmp(ans_buf, "0"), "");
+
+  big_free(&x1);
 }
 
 void test_sub1() {
@@ -54,6 +56,11 @@ void test_sub1() {
                      (ans_str_len == strlen(expected) + 1) &&  // expected olen
                      (strcmp(ans_buf, expected) == 0)), // expected output of write_string
                     "");
+
+  big_free(&x1);
+  big_free(&x2);
+  big_free(&ans);
+  big_free(&bi_expected);
 }
 
 void test_negative_result() {
@@ -99,6 +106,9 @@ void test_negative_result() {
   size_t olen;
   big_write_string(&small, buf, 602, &olen);
   print_test_result("Test negative result", strcmp(buf, small_minus_big) == 0, "");
+
+  big_free(&small);
+  big_free(&big);
 }
 
 void test_negative_self_subtraction() {
@@ -171,7 +181,6 @@ void test_inv_mod_bug() {
 }
 
 int main() {
-  // TODO tests have memory leaks
   printf("*** TEST BIG_SUB ***\n");
   test_sub1();
   test_self_subtraction();

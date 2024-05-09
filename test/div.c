@@ -69,7 +69,7 @@ void test_scalar_div() {
                      0 == strcmp("6", bufr1) && 0 == strcmp("3", bufr2)),
                     "");
 
-  big_free(&q1);  big_free(&q2);  big_init(&dividend);  big_init(&divisor1);  big_free(&divisor2);
+  big_free(&q1);  big_free(&q2);  big_free(&dividend);  big_free(&divisor1);  big_free(&divisor2);
   big_free(&r1);  big_free(&r2);
 }
 
@@ -103,7 +103,7 @@ void test_scalar_div_all_remainder() {
                     (0 == strcmp("1", buf1) && 0 == strcmp("3", buf2)),
                     "");
 
-  big_free(&q1);  big_init(&dividend);  big_free(&r1);
+  big_free(&q1);  big_free(&dividend);  big_free(&r1);
 }
 
 void test_div0() {
@@ -172,10 +172,32 @@ void test_div1() {
                     "");
   big_free(&x1);
   big_free(&x2);
+  big_free(&q);
+  big_free(&r);
 }
 
 void test_scalar_div_same_addr() {
   print_test_result("Test scalar div same addr", false, "TODO not implemented");
+}
+
+void test_is_prime_bug() {
+  bigint X, a, r, expected;
+  big_init(&X);
+  big_init(&a);
+  big_init(&r);
+  big_init(&expected);
+
+  big_read_string(&a, "FD2C278101C2F948A40BB3E1691367C8E0A4DBBCE1B03BD39E30B72DCF0AFECE");
+  big_read_string(&X, "A00C84237ED9FF5F971F333108B9B12D765A38CB06B5431A34E50B6AD6AA6F34C9");
+  big_div(NULL, &r, &a, &X);
+
+  big_read_string(&expected, "FD2C278101C2F948A40BB3E1691367C8E0A4DBBCE1B03BD39E30B72DCF0AFECE");
+  print_test_result("Test is_prime bug", 0 == big_cmp(&expected, &r), "");
+
+  big_free(&X);
+  big_free(&a);
+  big_free(&r);
+  big_free(&expected);
 }
 
 int main() {
@@ -186,6 +208,7 @@ int main() {
   test_scalar_div_all_remainder();
   test_div0();
   test_div1();
+  test_is_prime_bug();
   printf("\n");
 }
 

@@ -142,6 +142,27 @@ void test_fooled_fermat() {
   big_free(&random_base);
 }
 
+void test_bug_is_prime() {
+  bigint A, exp, m, ans;
+  big_init(&A);
+  big_init(&exp);
+  big_init(&m);
+  big_read_string(&A, "0xF3");
+  big_read_string(&exp, "0x16098B2CC");
+  big_read_string(&m, "0x16098B2CD");
+
+  char buf[2];
+  size_t olen;
+  big_exp_mod(&ans, &A, &exp, &m, NULL);
+  big_write_string(&ans, buf, 2, &olen);
+
+  print_test_result("Test bug in is_prime", 0 == strcmp("1", buf), "");
+
+  big_free(&A);
+  big_free(&exp);
+  big_free(&m);
+}
+
 int main() {
   printf("*** Test exp_mod ***\n");
   test_scalar_raised_scalar();
@@ -151,5 +172,6 @@ int main() {
   test_fermat_medium_prime();
   test_fooled_fermat();
   test_exponentiate_one();
+  test_bug_is_prime();
   printf("\n");
 }

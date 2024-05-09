@@ -27,6 +27,11 @@ void test_big_add() {
                      (-1 == big_cmp(&zero, &ans)) &&
                      (1 == big_cmp(&ans, &zero))),
                     "");
+
+  big_free(&x1);
+  big_free(&x2);
+  big_free(&ans);
+  big_free(&soln);
 }
 
 void test_big_add_three_and_two_limb_numbers() {
@@ -62,6 +67,11 @@ void test_big_add_three_and_two_limb_numbers() {
                      (ans_str_len + 1 == strlen(x1_str)) &&  // expected olen
                      (strcmp(ans_buf, expected) == 0)), // expected output of write_string
                     "");
+
+  big_free(&x1);
+  big_free(&x2);
+  big_free(&ans);
+  big_free(&bi_expected);
 }
 
 void test_additive_identity() {

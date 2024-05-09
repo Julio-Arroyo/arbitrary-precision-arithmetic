@@ -22,6 +22,11 @@ void test_mul0() {
   big_read_binary(&soln, soln_bin, 1);
 
   print_test_result("Test mul0", 0 == big_cmp(&ans, &soln), "");
+
+  big_free(&x1);
+  big_free(&x2);
+  big_free(&ans);
+  big_free(&soln);
 }
 
 void test_negative_mul() {

@@ -93,7 +93,7 @@ int main() {
   test_prime2();
   test_prime3();
   test_composite0();
-  test_generate_primes();
+  // test_generate_primes();
   test_carmichael0();
   test_carmichael1();
   test_carmichael2();

@@ -18,6 +18,9 @@ void test_cmp_two_limb_numbers() {
   big_read_string(&Y, Ystr);
 
   print_test_result(test_name, 0 == big_cmp(&X, &Y), "");
+
+  big_free(&X);
+  big_free(&Y);
 }
 
 void test_positive_zero_equal_negative_zero() {
