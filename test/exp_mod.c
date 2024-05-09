@@ -108,6 +108,7 @@ void test_exponentiate_one() {
   big_init(&one);
   big_init(&exp);
   big_init(&m);
+  big_init(&ans);
   big_set_nonzero(&one, 1);
   big_read_string(&exp, "0x1");
   big_read_string(&m, "0xFD");
@@ -122,6 +123,7 @@ void test_exponentiate_one() {
   big_free(&one);
   big_free(&exp);
   big_free(&m);
+  big_free(&ans);
 }
 
 void test_fooled_fermat() {
