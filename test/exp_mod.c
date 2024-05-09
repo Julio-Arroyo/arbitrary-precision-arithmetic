@@ -149,6 +149,7 @@ void test_bug_is_prime() {
   big_init(&A);
   big_init(&exp);
   big_init(&m);
+  big_init(&ans);
   big_read_string(&A, "0xF3");
   big_read_string(&exp, "0x16098B2CC");
   big_read_string(&m, "0x16098B2CD");
@@ -163,6 +164,7 @@ void test_bug_is_prime() {
   big_free(&A);
   big_free(&exp);
   big_free(&m);
+  big_free(&ans);
 }
 
 int main() {
