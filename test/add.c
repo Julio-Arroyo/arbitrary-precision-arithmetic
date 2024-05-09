@@ -1,5 +1,6 @@
 #include "test_bigint.h"
 #include "bigint.h"
+#include "bigint_aux.h"
 
 void test_big_add() {
   const char *test_name = "Test big add";
@@ -65,7 +66,7 @@ void test_big_add_three_and_two_limb_numbers() {
   print_test_result(test_name,
                     ((0 == big_cmp(&bi_expected, &ans)) &&   // testing big_cmp
                      (ans_str_len + 1 == strlen(x1_str)) &&  // expected olen
-                     (strcmp(ans_buf, expected) == 0)), // expected output of write_string
+                     (strcasecmp(ans_buf, expected) == 0)), // expected output of write_string
                     "");
 
   big_free(&x1);
@@ -74,8 +75,55 @@ void test_big_add_three_and_two_limb_numbers() {
   big_free(&bi_expected);
 }
 
-void test_additive_identity() {
-  // TODO
+void test_two_digits_minus_one_digit() {
+  bigint x, y;
+  big_init(&x);
+  big_init(&y);
+  big_read_string(&x, "10");
+  char y_str[3] = {'-', '\0', '\0'};
+  for (char ch = '0'; ch <= '9'; ch++) {
+    y_str[1] = ch;
+    big_read_string(&y, y_str);
+    big_add(&y, &x, &y);
+    printf("y: ");  big_print(&y);
+  }
+
+  big_free(&x);
+  big_free(&y);
+}
+
+void test_one_digit_additive_identity() {
+  bool passed = true;
+  bigint x, y;
+  big_init(&x);
+  big_init(&y);
+  big_read_string(&x, "0");
+  char y_str[2] = {'0', '\0'};
+  char buf[2];
+  size_t olen;
+  for (char ch = '0'; ch <= '9'; ch++) {
+    y_str[0] = ch;
+    big_read_string(&y, y_str);
+    big_add(&y, &y, &x);
+    big_write_string(&y, buf, 2, &olen);
+    if (strcasecmp(buf, y_str) != 0) {
+      passed = false;
+      break;
+    }
+  }
+  if (passed) {
+    for (char ch = 'a'; ch <= 'f'; ch++) {
+      y_str[0] = ch;
+      big_read_string(&y, y_str);
+      big_add(&y, &y, &x);
+      big_write_string(&y, buf, 2, &olen);
+    }
+  }
+
+  print_test_result("Test one digit additive identity", passed, "");
+
+  big_free(&x);
+  big_free(&y);
 }
 
 void test_associativity() {
@@ -105,10 +153,35 @@ void test_same_addr() {
   assert(0 == big_write_string(&X, twice_x_buf, 60, &olen));
   const char *twice_x_expected_str = "113F773FF42EE0E547016D6A8A395702233BFCF28E5F60";
   print_test_result("Test src/dest same address",
-                    0 == strcmp(twice_x_expected_str, twice_x_buf),
+                    0 == strcasecmp(twice_x_expected_str, twice_x_buf),
                     "");
 
   big_free(&X);
+}
+
+void test_reveal() {
+  bigint x, y;
+  big_init(&x);
+  big_init(&y);
+
+  big_read_string(&x, "2abc");
+  big_read_string(&y, "-abc");
+
+  big_add(&y, &x, &y);
+  char buf[5];
+  size_t olen;
+  big_write_string(&y, buf, 5, &olen);
+
+  uint8_t expected_bytes[] = {0x20, 0x00};
+  uint8_t ans_bytes[2];
+  assert(0 == big_write_binary(&y, ans_bytes, 2));
+  print_test_result("Test Reveal0",
+                    0 == strcasecmp(buf, "2000") &&
+                    olen == 5 &&
+                    0 == memcmp(ans_bytes, expected_bytes, 2), "");
+
+  big_free(&x);
+  big_free(&y);
 }
 
 int main() {
@@ -116,6 +189,9 @@ int main() {
   test_big_add();
   test_big_add_three_and_two_limb_numbers();
   test_same_addr();
+  test_reveal();
+  test_two_digits_minus_one_digit();
+  test_one_digit_additive_identity();
   printf("\n");
 }
 

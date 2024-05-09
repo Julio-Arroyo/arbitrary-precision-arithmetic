@@ -67,10 +67,58 @@ void test_read_string_write_binary() {
   big_free(&X);
 }
 
+void test_binary_edge_cases() {
+  bigint a;
+  big_init(&a);
+  uint8_t a_input_buf[] = {0x10};
+  big_read_binary(&a, a_input_buf, 1);
+
+  bigint b;
+  big_init(&b);
+  big_read_string(&b, "a");
+
+  big_sub(&a, &a, &b);
+
+  // edge case 1 cannot fill small buffer
+  uint8_t small_output_buf[0];
+  int small_res = big_write_binary(&a, small_output_buf, 0);
+
+  // edge case 2 fill 
+  size_t huge_size = 35;
+  uint8_t huge_output_buf[huge_size];
+  uint8_t expected_huge_output_buf[huge_size];
+  for (size_t i = 0; i < huge_size; i++) {
+    expected_huge_output_buf[i] = 0;
+    if (i == huge_size - 1) {
+      expected_huge_output_buf[i] = 6;
+    }
+  }
+  assert(0 == big_write_binary(&a, huge_output_buf, huge_size));
+  int huge_res = memcmp(huge_output_buf, expected_huge_output_buf, huge_size);
+  printf("huge_res: %d\n", huge_res);
+
+  // edge case 3 read huge output buf
+  bigint huge_expected;
+  big_init(&huge_expected);
+  big_read_binary(&huge_expected, expected_huge_output_buf, huge_size);
+  int cmp_res = big_cmp(&huge_expected, &a);
+
+  print_test_result("Test binary edge cases",
+                    small_res == ERR_BIGINT_BUFFER_TOO_SMALL &&
+                    huge_res == 0 &&
+                    cmp_res == 0,
+                    "");
+
+  big_free(&a);
+  big_free(&b);
+  big_free(&huge_expected);
+}
+
 int main() {
   printf("*** TEST io ***\n");
   test_read_string_write_binary();
   test_read_binary_write_string();
+  test_binary_edge_cases();
   printf("\n");
 }
 
