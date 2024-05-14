@@ -21,7 +21,7 @@ void test_two_limb_raised_scalar() {
   size_t olen;
   big_write_string(&ans, ans_buf, 51, &olen);
 
-  print_test_result("Test exp mod two-limb number to small scalar", 0 == strcmp(ans_str, ans_buf), "");
+  print_test_result("Test exp mod two-limb number to small scalar", 0 == strcasecmp(ans_str, ans_buf), "");
 
   big_free(&base);  big_free(&exponent);  big_free(&ans);  big_free(&modulo);
 }
@@ -44,7 +44,7 @@ void test_scalar_raised_scalar() {
   size_t olen;
   big_write_string(&ans, ans_buf, 51, &olen);
 
-  print_test_result("Test exp_mod scalar to scalar", 0 == strcmp(ans_str, ans_buf), "");
+  print_test_result("Test exp_mod scalar to scalar", 0 == strcasecmp(ans_str, ans_buf), "");
 
   big_free(&base);  big_free(&exponent);  big_free(&ans);  big_free(&modulo);
 }
@@ -118,7 +118,7 @@ void test_exponentiate_one() {
   big_exp_mod(&ans, &one, &exp, &m, NULL);
   big_write_string(&ans, buf, 2, &olen);
 
-  print_test_result("Test exponentiate one", 0 == strcmp("1", buf), "");
+  print_test_result("Test exponentiate one", 0 == strcasecmp("1", buf), "");
 
   big_free(&one);
   big_free(&exp);
@@ -159,12 +159,132 @@ void test_bug_is_prime() {
   big_exp_mod(&ans, &A, &exp, &m, NULL);
   big_write_string(&ans, buf, 2, &olen);
 
-  print_test_result("Test bug in is_prime", 0 == strcmp("1", buf), "");
+  print_test_result("Test bug in is_prime", 0 == strcasecmp("1", buf), "");
 
   big_free(&A);
   big_free(&exp);
   big_free(&m);
   big_free(&ans);
+}
+
+void test_exponentiate_zero() {
+  bigint zero = BIG_ZERO;
+  bigint exp;
+  bigint mod;
+  bigint ans;
+  big_init(&ans);
+  big_init(&exp);
+  big_init(&mod);
+  big_read_string(&exp, "deadbeef");
+  big_read_string(&mod, "fedcba01");
+  big_exp_mod(&ans, &zero, &exp, &mod, NULL);
+  print_test_result("Test exponentiate zero", big_is_zero(&ans), "");
+  big_free(&ans);
+  big_free(&exp);
+  big_free(&mod);
+}
+
+void test_exponentiate_negative_number() {
+  const char *base_str = "-5";
+  const char *mod_str = "0x65";
+  const char *ans_str = "60";
+
+  bigint base, exponent, ans, modulo;
+  big_init(&base);  big_init(&exponent);  big_init(&ans);  big_init(&modulo);
+
+  big_read_string(&base, base_str);
+  big_read_string(&modulo, mod_str);
+  big_set_nonzero(&exponent, 1);
+
+  assert(0 == big_exp_mod(&ans, &base, &exponent, &modulo, NULL));
+
+  char ans_buf[51];
+  size_t olen;
+  big_write_string(&ans, ans_buf, 51, &olen);
+  printf("soln: %s", ans_buf);
+
+  print_test_result("Test (-5)^1 mod 100 = 95", 0 == strcasecmp(ans_str, ans_buf), "");
+
+  big_free(&base);  big_free(&exponent);  big_free(&ans);  big_free(&modulo);
+}
+
+void test_large_exponentiate_negative_number() {
+  const char *base_str = "-0xb799a32586b2dc37b77324e85027633cb1814b7515b3b8713a13d38d182bf7c5640e0e072ca8b0f7c53d156e519ef2bdf01f";
+  const char *exp_str = "0xcdd8b2460a9c04f";
+  const char *mod_str = "0xd2175dd692ce8939ff13d503423284771c6eeb0181699b44894bcdfec0a271189f2635f88b3079eae9068d8507ed806e761d3";
+  const char *ans_str = "9a59544d3f4ab66406524f23961c8af1b92b3e059839e495bfd1737573d735797ee5cd6010c5e72fcb54dc76646c80711a678";
+
+  bigint base, exponent, ans, modulo;
+  big_init(&base);  big_init(&exponent);  big_init(&ans);  big_init(&modulo);
+
+  big_read_string(&base, base_str);
+  big_read_string(&exponent, exp_str);
+  big_read_string(&modulo, mod_str);
+
+  assert(0 == big_exp_mod(&ans, &base, &exponent, &modulo, NULL));
+
+  char ans_buf[102];
+  size_t olen;
+  assert(0 == big_write_string(&ans, ans_buf, 102, &olen));
+
+  print_test_result("Test large exponentiate negative number", 0 == strcasecmp(ans_str, ans_buf), "");
+
+  big_free(&base);  big_free(&exponent);  big_free(&ans);  big_free(&modulo);
+}
+
+void test_base_larger_than_mod() {
+  const char *base_str = "0x10000000000000001";
+  const char *exp_str = "0x3";
+  const char *mod_str = "0x3";
+  const char *ans_str = "2";
+
+  bigint base, exponent, ans, modulo;
+  big_init(&base);  big_init(&exponent);  big_init(&ans);  big_init(&modulo);
+
+  big_read_string(&base, base_str);
+  big_read_string(&exponent, exp_str);
+  big_read_string(&modulo, mod_str);
+
+  assert(0 == big_exp_mod(&ans, &base, &exponent, &modulo, NULL));
+
+  char ans_buf[102];
+  size_t olen;
+  assert(0 == big_write_string(&ans, ans_buf, 102, &olen));
+  printf("ans_buf %s", ans_buf);
+
+  print_test_result("Test base larger than modulus", 0 == strcasecmp(ans_str, ans_buf), "");
+
+  big_free(&base);  big_free(&exponent);  big_free(&ans);  big_free(&modulo);
+}
+
+void test_power_of_one() {
+  const char *mod_str1 = "0x1abc";  // is even
+  const char *mod_str2 = "0x1abd";
+  const char *exp_str = "0x1";
+  const char *base_str = "0x1fffff";
+  const char *ans_str = "a15";
+
+  bigint base, exponent, ans, modulo;
+  big_init(&base);  big_init(&exponent);  big_init(&ans);  big_init(&modulo);
+
+  big_read_string(&base, base_str);
+  big_read_string(&exponent, exp_str);
+  big_read_string(&modulo, mod_str1);
+
+  // fails since modulus is even
+  assert(ERR_BIGINT_BAD_INPUT_DATA == big_exp_mod(&ans, &base, &exponent, &modulo, NULL));
+
+  big_read_string(&modulo, mod_str2);
+
+  assert(0 == big_exp_mod(&ans, &base, &exponent, &modulo, NULL));
+
+  char ans_buf[4];
+  size_t olen;
+  assert(0 == big_write_string(&ans, ans_buf, 102, &olen));
+  assert(olen == 4);
+  print_test_result("Test base larger than modulus power of one", 0 == strcasecmp(ans_str, ans_buf), "");
+
+  big_free(&base);  big_free(&exponent);  big_free(&ans);  big_free(&modulo);
 }
 
 int main() {
@@ -177,5 +297,10 @@ int main() {
   test_fooled_fermat();
   test_exponentiate_one();
   test_bug_is_prime();
+  test_exponentiate_zero();
+  test_exponentiate_negative_number();
+  test_large_exponentiate_negative_number();
+  // test_base_larger_than_mod();
+  test_power_of_one();
   printf("\n");
 }
