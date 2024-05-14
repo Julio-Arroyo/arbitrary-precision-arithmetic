@@ -58,7 +58,7 @@ void test_mod_inv() {
   big_write_string(&ans2, buf2, 128, &olen);
 
   print_test_result("Test mod_inv",
-                    strcmp(buf1, solution1) == 0 && strcmp(buf2, solution2) == 0, "");
+                    strcasecmp(buf1, solution1) == 0 && strcasecmp(buf2, solution2) == 0, "");
   big_free(&ans1);  big_free(&ans2);  big_free(&X);  big_free(&Y);
 }
 
@@ -80,7 +80,7 @@ void test_textbook_example() {
   big_write_string(&ans1, buf1, 128, &olen);
 
   print_test_result("Test modular multiplicative inverse",
-                    strcmp(buf1, solution1) == 0, "");
+                    strcasecmp(buf1, solution1) == 0, "");
   big_free(&ans1);  big_free(&ans2);  big_free(&X);  big_free(&Y);
 }
 
@@ -102,7 +102,7 @@ void test_tiny_example() {
   big_write_string(&ans1, buf1, 128, &olen);
 
   print_test_result("Test tiny example",
-                    strcmp(buf1, solution1) == 0, "");
+                    strcasecmp(buf1, solution1) == 0, "");
   big_free(&ans1);  big_free(&ans2);  big_free(&X);  big_free(&Y);
 }
 
@@ -123,8 +123,45 @@ void test_m_mod_base() {
   size_t olen;
   big_write_string(&ans1, buf1, 128, &olen);
 
-  print_test_result("Test m mod BASE", strcmp(buf1, solution1) == 0, "");
+  print_test_result("Test m mod BASE", strcasecmp(buf1, solution1) == 0, "");
   big_free(&ans1);  big_free(&X);  big_free(&Y);
+}
+
+void test_revealed_bigint_inverse_12() {
+  const size_t ntests = 16;
+  const char *bases[ntests] = {"1a", "fd", "df", "14", "b3", "f8", "38",
+                           "a0", "22", "65", "99", "d4", "6b", "ef", "5a", "31"};
+
+  const char *moduli[ntests] = {"6df", "2d7", "dab", "1639", "178d", "1b41", "1fff",
+                            "dff", "10bb", "1cb5", "a7", "1df", "bf", "10c9", "92b", "829"};
+
+  const char *solutions[ntests] = {"cb", "fa", "b18", "c39", "2e5", "1a6", "176d", "2e3", "7e",
+                              "16bd", "9b", "1a2", "19", "35f", "7d8", "4ff"};
+
+  bigint base, modulus, answer, expected;
+  big_init(&base);
+  big_init(&modulus);
+  big_init(&answer);
+  big_init(&expected);
+  bool passed = true;
+  for (size_t i = 0; i < ntests; i++) {
+    big_read_string(&base, bases[i]);
+    big_read_string(&modulus, moduli[i]);
+    big_inv_mod(&answer, &base, &modulus);
+
+    big_read_string(&expected, solutions[i]);
+    if (big_cmp(&answer, &expected) != 0) {
+      passed = false;
+      printf("Failed at test #%zu. ", i);
+      printf("%s^-1 mod %s = %s but got ", bases[i], moduli[i], solutions[i]);
+      big_print(&answer);
+    }
+  }
+  print_test_result("Test revealed bigint-inverse-12", passed, "TODO");
+  big_free(&base);
+  big_free(&modulus);
+  big_free(&answer);
+  big_free(&expected);
 }
 
 int main() {
@@ -135,6 +172,6 @@ int main() {
   test_bad_mod1();
   test_mod_inv();
   test_m_mod_base();
+  test_revealed_bigint_inverse_12();
   printf("\n");
 }
-
